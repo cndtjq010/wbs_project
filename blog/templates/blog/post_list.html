@@ -13,7 +13,7 @@
      <div class="content container">
        <div class="row">
          <div class="col-md-8">
-           {% block content%}
+           {% block content %}
            {% for post in posts %}
            <div class="post">
              <div class="date">
@@ -23,7 +23,7 @@
              <p>{{ post.text|linebreaksbr }}</p>
            </div>
            {% endfor %}
-           {% endblock%}
+           {% endblock %}
          </div>
          <img src="/static/image/11.jpeg" alt="My Image">
          <video src="/static/video/steam.mov" controls>
