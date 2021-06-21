@@ -1,41 +1,30 @@
 from django.shortcuts import render
-from django.utils import timezone
-from models import Post
-from .forms import PostForm
-from django.shortcuts import redirect
-from django.shortcuts import render, get_object_or_404
-# Create your views here.
-def post_list(request):
-    posts=Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date')
-    return render(request, 'blog/post_list.html', {'posts':posts})
+from .models import Post
 
-def post_detail(request,pk):
-    post=get_object_or_404(Post,pk=pk)
-    return render(request, 'blog/post_detail.html', {'post':post})
+def index(request):
+    return render(request, 'blog/index.html')
 
-def post_new(request):
-    if request.method== "POST":
-        form = PostForm(request.POST)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.author= request.user
-            post.published_date= timezone.now()
-            post.save()
-            return redirect('post_detail', pk=post.pk)
-    else:
-        form = PostForm()
-    return render(request, 'blog/post_edit.html', {'form': form})
+def blog(request):
+    postlist = Post.objects.all()
+    return render(request, 'blog/blog.html', {'postlist':postlist})
 
-def post_edit(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    if request.method== "POST":
-        form = PostForm(request.POST, instance=post)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.author= request.user
-            post.published_date= timezone.now()
-            post.save()
-            return redirect('post_detail', pk=post.pk)
-    else:
-        form = PostForm(instance=post)
-    return render(request, 'blog/post_edit.html', {'form': form})
+def posting(request, pk):
+    post = Post.objects.get(pk=pk)
+    return render(request, 'blog/posting.html', {'post':post})
+
+def new_post(request):
+    if request.method == 'POST':
+        if request.POST['mainphoto']:
+            new_article=Post.objects.create(
+                postname=request.POST['postname'],
+                contents=request.POST['contents'],
+                mainphoto=request.POST['mainphoto'],
+            )
+        else:
+            new_article=Post.objects.create(
+                postname=request.POST['postname'],
+                contents=request.POST['contents'],
+                mainphoto=request.POST['mainphoto'],
+            )
+        return redirect('/blog/')
+    return render(request, 'blog/new_post.html')
